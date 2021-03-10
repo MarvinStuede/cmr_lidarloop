@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="database_path" default="~/.ros/rtabmap.db"/>
+  <arg name="with_lidarloop" default="false"/>
+  <group if="$(arg with_lidarloop)">
+    <include file="$(find cmr_lidarloop)/launch/cmr_lidarloop.launch">
+      <arg name="cfg_file" value="$(find cmr_lidarloop)/cfg/cmr_lidarloop_params_kitti.yaml"/>
+    </include>
+  </group>
+
+  <param name="RGBD/CreateOccupancyGrid" type="bool" value="false"/>
+
+
+  <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+    <arg name="stereo" value="true"/>
+    <arg name="database_path" value="$(arg database_path)"/>
+    <arg name="left_image_topic" value="/kitti/camera_color_left/image"/>
+    <arg name="right_image_topic" value="/kitti/camera_color_right/image"/>
+    <arg name="left_camera_info_topic" value="/kitti/camera_color_left/camera_info"/>
+    <arg name="right_camera_info_topic" value="/kitti/camera_color_right/camera_info"/>
+    <arg name="imu_topic" value="/kitti/oxts/imu"/>
+    <arg name="gps_topic" value="/kitti/oxts/gps/fix"/>
+    <arg name="approx_sync"     value="true"/>
+    <arg name="rgbd_sync"       value="true"/>
+    <arg name="use_sim_time"   	value="true"/>
+    <arg name="frame_id"  	value="base_link"/>
+    <arg name="rtabmapviz"       value="false"/>
+    <arg name="subscribe_scan_descriptor"   value="$(arg with_lidarloop)"/>
+    <arg name="scan_descriptor_topic"   value="/cmr_lidarloop/scan_descriptor"/>
+    <arg name="approx_rgbd_sync"   value="true"/>
+    <arg name="wait_imu_to_init"   value="true"/>
+    <arg name="ground_truth_frame_id"  	value="world"/>
+    <arg name="ground_truth_base_frame_id"  	value="base_link_gt"/>
+    <!-- Params from:
+    Labbe 2018, RTAB‐Map as an open‐source lidar and visual simultaneous localization and
+    mapping library for large‐scale and long‐term online operation,
+    Journal of Field Robotics -->
+    <arg name="rtabmap_args"  	value="--delete_db_on_start --RGBD/CreateOccupancyGrid false \
+      --Optimizer/GravitySigma 0.0 \
+      --Rtabmap/DetectionRate 0 \
+      --RGBD/OptimizeMaxError 0.0 \
+      --Odom/ScanKeyFrameThr 0.8 \
+      --OdomF2M/ScanMaxSize 2000 \
+      --OdomF2M/ScanSubstractRadius 0.05 \
+      --RGBD/LinearUpdate 0 \
+      --Rtabmap/CreateIntermediateNodes true \
+      --GFTT/MinDistance 7 \
+      --GFTT/QualityLevel 0.01 \
+      --Vis/MaxFeatures 1500 \
+      --Kp/MaxFeatures 750 \
+      --Mem/STMSize 30 \
+      --Mem/RehearsalSimilarity 0.6 \
+      --OdomF2M/MaxSize 3000"/>
+  </include>
+</launch>

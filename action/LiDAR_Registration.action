@@ -1,0 +1,25 @@
+#* @file   LiDAR_Registration.action
+#* @author Tim-Lukas Habich
+#* @date   04/2020
+#*
+#* @brief  Defintion of message for LiDAR_Registration action server
+#*
+#
+#goal definition
+sensor_msgs/PointCloud2 current_cloud #Filtered Point Cloud of current ID
+sensor_msgs/PointCloud2 target_cloud #Filtered Point Cloud of Loop ID
+int32 id #Current ID
+int32 loop_id #Loop ID
+string path_clouds #Path where the point clouds are to be stored
+int32 sky_direction #Axis pointing in sky direction
+---
+#result definition
+float32[] transformation_vctr #Computed transformation between nodes
+int32 id #Current ID
+int32 loop_id #Loop ID
+float64 variance #Variance for information matrix
+int32 n_inliers #Number of inliers during initial alignment
+---
+#feedback
+float32[] transformation_vctr #Empty transformation between nodes
+

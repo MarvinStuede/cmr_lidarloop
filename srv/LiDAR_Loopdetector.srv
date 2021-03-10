@@ -1,0 +1,16 @@
+#*
+#* @file   LiDAR_Loopdetector.srv
+#* @author Tim-Lukas Habich
+#* @date   03/2020
+#*
+#* @brief  Defintion of message for LiDAR_Loopdetector server
+#*
+#
+float64[] current_features #1D feature vector of current id
+float64[] memory_features #1D feature vector of all ids (length: number_ids*step)
+int32 step #length of every feature vector
+int32[] memory_ids #Ids in memory
+int32[] lengths_features #Lengths of features of type 1 & 2 in each feature vector
+float64 loop_probability_min #Minimum value for the loop probability
+---
+int32 loop_id #loop closure id with highest probability

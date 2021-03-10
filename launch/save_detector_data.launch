@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * @file   save_detector_data.launch
+ * @author Tim-Lukas Habich
+ * @date   05/2020
+ *
+ * @brief  Launches node to save data for detector
+ */
+-->
+
+<launch>
+  <group ns="cmr_lidarloop">
+    <!-- Loads main params from yaml -->
+    <rosparam file="$(find cmr_lidarloop)/cfg/cmr_lidarloop_params.yaml" command="load" />
+    
+    <!-- Start node -->
+    <node name="save_data_for_detector" pkg="cmr_lidarloop" type="save_data_for_detector" output="screen">
+    </node>
+  </group>
+</launch>

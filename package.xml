@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>cmr_lidarloop</name>
+  <version>0.1.0</version>
+  <description>The cmr_lidarloop package</description>
+
+  <maintainer email="tim-lukas.habich@imes.uni-hannover.de">tim-lukas</maintainer>
+
+  <license>BSD</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp </depend>
+  <depend>rospy </depend>
+  <depend>std_msgs </depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>cv_bridge </depend>
+  <depend>image_transport</depend>
+  <depend>vision_opencv</depend>
+  <depend>rtabmap </depend>
+  <depend>message_filters </depend>
+  <depend>rtabmap_ros </depend>
+  <depend>message_generation</depend>
+  <depend>python-numpy</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>actionlib</depend>
+  <depend>python-sklearn</depend>
+  <depend>python-scipy</depend>
+  
+  <exec_depend>message_runtime </exec_depend>
+
+  
+  <export>
+    
+
+  </export>
+</package>

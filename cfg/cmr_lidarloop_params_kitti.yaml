@@ -1,0 +1,44 @@
+#* @file   cmr_lidarloop_params_kitti.yaml
+#* @author Tim-Lukas Habich
+#* @date   10/2020
+#*
+#* @brief  Parameters of cmr_lidarloop package for KITTI evaluation
+#*
+#
+
+#Loop detection parameters
+#Use standalone environment /cmr_lidarloop/detector to train and test loop detectors
+loop_probability_min:   0.524                     #Minimum value for the loop probability, to accept a loop
+R_min:                  7.5                      #Minimum radius in which loops are searched -> added to this is the current uncertainty of the position (computed with odometry)
+r_max:                  50.0                      #Maximum range for feature computation
+n_verify:               3                         #Verify loop -> detect at least another loop between current id and [loop_id-n_verify,loop_id+n_verify]
+                                                  #n_verify<1 -> disabled
+n_max_nodes:            200                       #Maximum number of nodes used for loop search -> if more nodes are available, a random subset of size n_max_nodes is used
+alpha_thres:            0.5                       #Multi session operation: alpha=nodes_WM_local_map/nodes_WM_all
+                                                  #alpha<alpha_thres -> Localization in map from different session not yet done -> Search for loops throughout WM
+n_ms_verify:            3                         #Verification for multi session operation: n_ms_verify consecutive loop candidates must lie within radius R_ms_verify
+R_ms_verify:            5.0                       #Verification for multi session operation: n_ms_verify consecutive loop candidates must lie within radius R_ms_verify
+n_ms_start:             3                         #Multi session operation: for the first added n_ms_start loop pairs search for loops throughout WM instead within R_search
+beta:                   0.0                       #Radius in which loops are searched R_search=R_min+beta*R_odom (disabled for KITTI since uncertainty doesn't grow steadily)
+
+#Scan registration parameters
+#Use standalone environment /cmr_lidarloop/src/Registration_Test to test registration with desired scans
+sky_direction:          -2                        #Axis pointing to the sky to identify z-axis in the current coordinate system
+                                                  #1->x pointing to the sky, -1->-x pointing to the sky, 
+                                                  #2->y pointing to the sky, -2->-y pointing to the sky, 
+                                                  #3->z pointing to the sky, -3->-z pointing to the sky,
+                                                  #0->z trimming disabled
+z_limit:                1.0                       #Z-coordinate at which the point clouds are trimmed (to avoid random points on the ground)
+i_limit:                0                         #Intensity filter: Delete points in point cloud with intensity<i_limit
+r_limit:                30                        #Range filter: Delete points in point cloud with range>r_limit
+leafsize:               0.2                      #Leaf size for voxel grid filter
+n_max_points:           10000                     #Random downsampling after all filter steps, if number of points in scan is bigger than n_max_points
+n_min_points:           7000                      #Both filtered clouds should have more points than n_min_points. Otherwise loop pair is rejected, because registration is too challenging
+min_inliers:            1000                      #Minimum number of inliers to accept a transformation (after outlier rejection)
+t_max:                  10.0                       #Maximum translational offset. Only if the translational offset calculated from the LiDAR registration is smaller,
+                                                  #the loop is accepted and the link is sent to RTAB-Map
+path_clouds:            '/home/stuede/clouds'  #Path where the point clouds of every registered loop pair are to be stored. If 'false' no clouds are saved
+
+#Topics
+scan_topic_name:        '/kitti/velo/pointcloud'    #Name of the topic on which the laser scanner is publishing
+odom_topic_name:        '/rtabmap/odom'      #Name of the topic on which the odometry data is published

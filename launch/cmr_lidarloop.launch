@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * @file   cmr_lidarloop.launch
+ * @author Tim-Lukas Habich
+ * @date   05/2020
+ *
+ * @brief  Launches all necessary nodes of cmr_lidarloop
+ */
+-->
+
+<launch>
+    <arg name="mapping" default="false" doc="If true, overwrite some params for mapping"/>
+    <arg name="cfg_file" default="$(find cmr_lidarloop)/cfg/cmr_lidarloop_params.yaml"/>
+
+
+    <!-- Shutdown Lidarloop -->
+    <!--    <node pkg="cmr_os" type="shutdown_node" name="lidarloop_shutdown" required="true"/> -->
+
+  <group ns="cmr_lidarloop">
+  <env name="ROSCONSOLE_CONFIG_FILE"
+       value="$(find cmr_lidarloop)/cfg/rosconsole.config"/>
+    <!-- Loads main params from yaml -->
+    <rosparam file="$(arg cfg_file)" command="load" />
+
+    <group if="$(arg mapping)">
+        <!-- Overwrite param to wait a duration until next detection -->
+        <param name="throttle_dur" type="double" value="0.0"/>
+    </group>
+
+    <!-- Start main node -->
+    <node name="lidar_loopdetection" pkg="cmr_lidarloop" type="lidar_loopdetection" output="screen" respawn="true">
+    </node> 
+
+    <!-- Start registration server -->
+    <node name="lidar_registration_server" pkg="cmr_lidarloop" type="lidar_registration_server" output="screen" respawn="true">
+     </node>
+
+    <!-- Start loop detector server -->
+    <node name="lidar_loopdetector_server" pkg="cmr_lidarloop" type="lidar_loopdetector_server.py" output="screen" respawn="true">
+     </node>
+  </group>
+</launch>
