@@ -14,7 +14,7 @@ The code is part of a conference paper submitted for publication at AIM 2021. Yo
 * [Getting Started](#getting-started)
 * [Usage](#usage)
   * [Standalone for Training and Testing of Detectors](#standalone-for-training-and-testing-of-detectors)
-  * [Standalone for Scan Registration](#standalone-for-scan-registration)
+  * [Standalone for Scan Registration](#stangdalone-for-scan-registration)
   * [Single- and Multi-Session Operation with RTAB-Map](#single--and-multi-session-operation-with-rtab-map)
 * [Contact](#contact)
 
@@ -91,6 +91,8 @@ All necessary nodes of cmr_lidarloop can be launched with:
 $ roslaunch cmr_lidarloop cmr_lidarloop.launch
 ```
 After the info _Please start RTAB-Map._ appears, RTAB-Map can be used for mapping and localization as usual.
+It is important to set subscribe_scan_cloud:=false and subscribe_scan_descriptor:=true.
+Thus, RTAB-Map subscribes to the scan descriptor of cmr_lidarloop, which additionally contains the pointcloud (see [here](https://github.com/MarvinStuede/cmr_localization/tree/master/cmr_localization/cfg) for our RTAB-Map parameters).
 When terminating cmr_lidarloop, selected data, such as the Ids of accepted loop pairs, is saved (~/.ros/cmr_lidarloop_history.csv).
 
 ## Contact
