@@ -4,8 +4,11 @@ This is a ROS package to close loops with LiDAR data. It was developed to extend
 The code is part of a conference paper submitted for publication at AIM 2021. You can find a [detailed description of cmr_lidarloop](https://marvinstuede.github.io/Sobi/software/lidarloop.html) in the documentation of our robot Sobi.
 
 <p align="center">
+  <a href="https://www.youtube.com/watch?v=Ua_BnH1H11s" />
+    <img src="images/cmr_lidarloop_AIM_youtube.png" width="300"/>
+  </a>
   <a href="https://www.youtube.com/watch?v=Co81uQPXvn8" />
-    <img src="images/cmr_lidarloop_youtube.png" width="500"/>
+    <img src="images/cmr_lidarloop_youtube.png" width="300"/>
   </a>
 </p>
 
@@ -16,6 +19,7 @@ The code is part of a conference paper submitted for publication at AIM 2021. Yo
   * [Standalone for Training and Testing of Detectors](#standalone-for-training-and-testing-of-detectors)
   * [Standalone for Scan Registration](#stangdalone-for-scan-registration)
   * [Single- and Multi-Session Operation with RTAB-Map](#single--and-multi-session-operation-with-rtab-map)
+* [Citation](#citation)  
 * [Contact](#contact)
 
 ## Getting Started
@@ -94,6 +98,9 @@ After the info _Please start RTAB-Map._ appears, RTAB-Map can be used for mappin
 It is important to set subscribe_scan_cloud:=false and subscribe_scan_descriptor:=true.
 Thus, RTAB-Map subscribes to the scan descriptor of cmr_lidarloop, which additionally contains the pointcloud (see [here](https://github.com/MarvinStuede/cmr_localization/tree/master/cmr_localization/cfg) for our RTAB-Map parameters).
 When terminating cmr_lidarloop, selected data, such as the Ids of accepted loop pairs, is saved (~/.ros/cmr_lidarloop_history.csv).
+
+## Citation
+TODO
 
 ## Contact
 * [Tim-Lukas Habich](https://www.imes.uni-hannover.de/de/institut/team/m-sc-tim-lukas-habich/), Leibniz University Hannover, Institute of Mechatronic Systems (tim-lukas.habich@imes.uni-hannover.de)
