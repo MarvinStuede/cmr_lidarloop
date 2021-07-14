@@ -5,10 +5,10 @@ The code is part of a conference paper submitted for publication at AIM 2021. Yo
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=Ua_BnH1H11s" />
-    <img src="images/cmr_lidarloop_AIM_youtube.png" width="300"/>
+    <img src="images/cmr_lidarloop_AIM_youtube.png" width="400"/>
   </a>
   <a href="https://www.youtube.com/watch?v=Co81uQPXvn8" />
-    <img src="images/cmr_lidarloop_youtube.png" width="300"/>
+    <img src="images/cmr_lidarloop_youtube.png" width="400"/>
   </a>
 </p>
 
