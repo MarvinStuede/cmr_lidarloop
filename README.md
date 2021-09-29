@@ -100,8 +100,12 @@ Thus, RTAB-Map subscribes to the scan descriptor of cmr_lidarloop, which additio
 When terminating cmr_lidarloop, selected data, such as the Ids of accepted loop pairs, is saved (~/.ros/cmr_lidarloop_history.csv).
 
 ## Citation
-TODO
-
+If you use this software for your research, please cite the following publication:
+```
+Have I been here before? Learning to Close the Loop with LiDAR Data in Graph-Based SLAM
+Habich, T.-L., Stuede, M., Labbé, M., Spindeldreier, S.
+IEEE/ASME International Conference on Advanced Intelligent Mechatronics (AIM) 2021
+```
 ## Contact
 * [Tim-Lukas Habich](https://www.imes.uni-hannover.de/de/institut/team/m-sc-tim-lukas-habich/), Leibniz University Hannover, Institute of Mechatronic Systems (tim-lukas.habich@imes.uni-hannover.de)
 * [Marvin Stuede](https://www.imes.uni-hannover.de/de/institut/team/m-sc-marvin-stuede/), Leibniz University Hannover, Institute of Mechatronic Systems (marvin.stuede@imes.uni-hannover.de)
