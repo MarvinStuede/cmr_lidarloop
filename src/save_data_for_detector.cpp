@@ -191,7 +191,7 @@ int main(int argc, char** argv)
   }
 
   //Scan subscription and publisher
-  scanDescriptorPub = nh.advertise<rtabmap_ros::ScanDescriptor>("/cmr_lidarloop/scan_descriptor", 1);
+  scanDescriptorPub = nh.advertise<rtabmap_ros::ScanDescriptor>("scan_descriptor", 1);
   ros::Subscriber scanSub;
   scanSub = nh.subscribe(scan_topic_name, 1, scanCallback);
 
