@@ -52,3 +52,5 @@ Makefile
 src/Registration_Test/Registration_Test
 cmake_install.cmake
 .idea
+
+detector/training/plots/*

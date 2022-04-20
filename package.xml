@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>cmr_lidarloop</name>
   <version>0.1.0</version>
   <description>The cmr_lidarloop package</description>
 
-  <maintainer email="tim-lukas.habich@imes.uni-hannover.de">tim-lukas</maintainer>
+  <maintainer email="marvin.stuede@imes.uni-hannover.de">Marvin Stuede</maintainer>
 
   <license>BSD</license>
 
@@ -26,14 +26,15 @@
   <depend>python-numpy</depend>
   <depend>actionlib_msgs</depend>
   <depend>actionlib</depend>
-  <depend>python-sklearn</depend>
-  <depend>python-scipy</depend>
-  
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">python-sklearn</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">python-scipy</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">python3-sklearn</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">python3-scipy</exec_depend>
   <exec_depend>message_runtime </exec_depend>
 
-  
+
   <export>
-    
+
 
   </export>
 </package>

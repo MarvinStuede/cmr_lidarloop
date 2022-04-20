@@ -4,11 +4,8 @@ This is a ROS package to close loops with LiDAR data. It was developed to extend
 The code is part of a conference paper submitted for publication at AIM 2021. You can find a [detailed description of cmr_lidarloop](https://marvinstuede.github.io/Sobi/software/lidarloop.html) in the documentation of our robot Sobi.
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=Ua_BnH1H11s" />
-    <img src="images/cmr_lidarloop_AIM_youtube.png" width="400"/>
-  </a>
   <a href="https://www.youtube.com/watch?v=Co81uQPXvn8" />
-    <img src="images/cmr_lidarloop_youtube.png" width="400"/>
+    <img src="images/cmr_lidarloop_youtube.png" width="500"/>
   </a>
 </p>
 
@@ -19,27 +16,30 @@ The code is part of a conference paper submitted for publication at AIM 2021. Yo
   * [Standalone for Training and Testing of Detectors](#standalone-for-training-and-testing-of-detectors)
   * [Standalone for Scan Registration](#stangdalone-for-scan-registration)
   * [Single- and Multi-Session Operation with RTAB-Map](#single--and-multi-session-operation-with-rtab-map)
-* [Citation](#citation)  
 * [Contact](#contact)
 
 ## Getting Started
-The robot the package was developed with is running Ubuntu 16.04 with ROS kinetic.
 Since cmr_lidarloop was introduced as an extension of the online SLAM library RTAB-Map, the corresponding ROS package with all necessary dependencies must also be installed.
 Therefore, to use the package the following prerequisites must be met:
 
-* [Ubuntu](http://releases.ubuntu.com/16.04/) - A working install of Ubuntu 16.04 - Xenial Xerus
-* [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) - ROS kinetic installation
+* [ROS](http://wiki.ros.org/ROS/Installation) - Currently tested with __kinetic__, __melodic__ and __noetic__
 * [Configured ROS Environment](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment) - ROS workspace created
-* [RTAB-Map](http://github.com/introlab/rtabmap_ros/) - RTAB-Map installation
+* [RTAB-Map](http://github.com/introlab/rtabmap_ros/) - RTAB-Map installation. Currently tested with RTAB-Map version __0.20.16__
 
-Further, the scikit-learn library for Python 2 has to be installed:
-```
-$ pip install scikit-learn==0.20.1 scipy==0.13.3 numpy==1.11.0
-```
+The package was mainly developed with the following libraries in the given version.
+However, newer versions, e.g. installed by rosdep, should work as well.
+| Dependency     | Version |
+| ----------- | ----------- |
+| scikit-learn | 0.20.1|
+| scipy| 0.13.3|
+| numpy| 1.11.0|
+
 Install cmr_lidarloop in your catkin workspace:
 ```
 $ cd ~/catkin_ws
 $ git clone https://github.com/MarvinStuede/cmr_lidarloop.git src/cmr_lidarloop
+$ rosdep update
+$ rosdep install cmr_lidarloop
 $ catkin build
 ```
 
@@ -68,7 +68,7 @@ For training, the detector data must be moved to the training directory (detecto
 ```
 $ python train_the_detector.py raw_detector_data.csv
 ```
-must be executed. The detector trained by us (detector/training/LiDAR_Loopdetector.pickle) is used in cmr_lidarloop operation. It can be replaced by other trained detectors.
+must be executed. The detector trained by us (detector/training/LiDAR_Loopdetector_pythonX.pickle) is used in cmr_lidarloop operation. It can be replaced by other trained detectors.
 In contrast to the training, the data must be moved to the test directory (detector/test) for testing existing detectors and
 ```
 $ python test_the_detector.py raw_detector_data.csv
@@ -99,13 +99,6 @@ It is important to set subscribe_scan_cloud:=false and subscribe_scan_descriptor
 Thus, RTAB-Map subscribes to the scan descriptor of cmr_lidarloop, which additionally contains the pointcloud (see [here](https://github.com/MarvinStuede/cmr_localization/tree/master/cmr_localization/cfg) for our RTAB-Map parameters).
 When terminating cmr_lidarloop, selected data, such as the Ids of accepted loop pairs, is saved (~/.ros/cmr_lidarloop_history.csv).
 
-## Citation
-If you use this software for your research, please cite the following publication:
-```
-Have I been here before? Learning to Close the Loop with LiDAR Data in Graph-Based SLAM
-Habich, T.-L., Stuede, M., Labbé, M., Spindeldreier, S.
-IEEE/ASME International Conference on Advanced Intelligent Mechatronics (AIM) 2021
-```
 ## Contact
 * [Tim-Lukas Habich](https://www.imes.uni-hannover.de/de/institut/team/m-sc-tim-lukas-habich/), Leibniz University Hannover, Institute of Mechatronic Systems (tim-lukas.habich@imes.uni-hannover.de)
 * [Marvin Stuede](https://www.imes.uni-hannover.de/de/institut/team/m-sc-marvin-stuede/), Leibniz University Hannover, Institute of Mechatronic Systems (marvin.stuede@imes.uni-hannover.de)

@@ -47,7 +47,7 @@
       --RGBD/LinearUpdate 0 \
       --Rtabmap/CreateIntermediateNodes true \
       --Icp/PointToPlane false \
-      --Icp/PointToPlaneK 0 \      
+      --Icp/PointToPlaneK 0 \
       --GFTT/MinDistance 7 \
       --GFTT/QualityLevel 0.01 \
       --Vis/MaxFeatures 1500 \

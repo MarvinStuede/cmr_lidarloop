@@ -1,9 +1,11 @@
-﻿#* @file   functions_for_detector.py
-#* @author Tim-Lukas Habich
-#* @date   05/2020
-#*
-#* @brief  Functions for detector scripts
+#!/usr/bin/env python
+"""
+@file   functions_for_detector.py
+@author Tim-Lukas Habich
+@date   05/2020
 
+@brief  Functions for detector scripts
+"""
 import numpy as np
 import csv
 import pdb
@@ -52,7 +54,7 @@ def reset_plot_settings():
     rc('font',**{'family':'serif','serif':['Times']})
     return
 
-reset_plot_settings()
+# reset_plot_settings()
 
 def get_raw_data_from_csv(name_csv):
     with open(name_csv) as csv_file:

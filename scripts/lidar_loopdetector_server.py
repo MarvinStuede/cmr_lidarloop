@@ -3,12 +3,11 @@
 
 /**
  * @file   LiDAR_Loopdetector_server.py
- * @author Tim-Lukas Habich
+ * @author Tim-Lukas Habich, Marvin Stuede
  * @date   03/2020
  *
  * @brief  ROS Service to detect a loop closure with trained classifier
  *         (detector/training/LiDAR_Loopdetector.pickle)
- *         Install scikit-learn library for Python2: pip install scikit-learn==0.20.1 scipy==0.13.3 numpy==1.11.0
  */"""
 
 from cmr_lidarloop.srv import LiDAR_Loopdetector,LiDAR_LoopdetectorResponse
@@ -16,10 +15,17 @@ import rospy
 import pickle
 import numpy as np
 import rospkg
-from time import clock
+import sys
+
+if sys.version_info.major == 3:
+    assert sys.version_info.minor >= 3, "Must use at least Python 3.3"
+    from time import process_time as get_time
+else:
+    from time import clock as get_time
+
 
 def handle_LiDAR_Loopdetector(req):
-    t1=clock()
+    t1=get_time()
     #Read request
     current_features=np.array(req.current_features,ndmin=2)
     step=req.step
@@ -61,9 +67,10 @@ def handle_LiDAR_Loopdetector(req):
     #Initilization of loop_id (-1 -> no loop found)
     loop_id=-1
     count=0
-    for i in np.arange(memory_ids.size):
+    temp_probability=0
+    for i in np.arange(memory_ids.size-1):
         count+=1
-        #tdebug=clock()
+        #tdebug=process_time()
         #print(str(round((tdebug-t1)*10**3,1))+"ms ")
 
         #Calculation of feature vector (input for classifier)
@@ -97,15 +104,15 @@ def handle_LiDAR_Loopdetector(req):
         if temp_probability>loop_probability:
             loop_id=memory_ids[i]
             loop_probability=temp_probability
-	if temp_probability>max_probability:
-	    max_probability=temp_probability
+    if temp_probability > max_probability:
+        max_probability = temp_probability
 
     if loop_id!=-1:
         rospy.logdebug("Loop closure with id "+str(loop_id)+" detected (probability: "+str(round(loop_probability*100,2))+" %)")
     else:
         rospy.logdebug("No loop detected. The highest probability was "+str(round(max_probability*100,2))+" %")
 
-    t2=clock()
+    t2=get_time()
     rospy.logdebug("\tLoop search with "+str(count)+" pairs took "+str(round((t2-t1)*10**3,1))+"ms.")
     return LiDAR_LoopdetectorResponse(int(loop_id))
 
@@ -118,6 +125,7 @@ def LiDAR_Loopdetector_server():
 if __name__ == "__main__":
     rospack = rospkg.RosPack()
     path_cmr_lidarloop=rospack.get_path('cmr_lidarloop')
-    with open(path_cmr_lidarloop+'/detector/training/LiDAR_Loopdetector.pickle', 'rb') as f:
-            detector = pickle.load(f)
+    detector_name = 'LiDAR_Loopdetector_python' + str(sys.version_info.major) + '.pickle'
+    with open(path_cmr_lidarloop+'/detector/training/' + detector_name, 'rb') as f:
+            detector = pickle.load(f, encoding='latin1')
     LiDAR_Loopdetector_server()

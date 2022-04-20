@@ -68,3 +68,5 @@ add_dependencies(
   ${cmr_lidarloop_EXPORTED_TARGETS}
 )
 
+catkin_install_python(PROGRAMS scripts/lidar_loopdetector_server.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

@@ -442,17 +442,18 @@ void mapDataCallback(const rtabmap_ros::MapDataConstPtr & mapDataMsg, const rtab
         int temp_id;
         for (int i = 0; i < n_nodes_calc; ++i) {
           temp_id=Ids_WM[i];
+          if(lidar_memory.xyz.find(temp_id) != lidar_memory.xyz.end()){
+            temp_xyz[0]=lidar_memory.xyz[temp_id][0];
+            temp_xyz[1]=lidar_memory.xyz[temp_id][1];
+            temp_xyz[2]=lidar_memory.xyz[temp_id][2];
 
-          temp_xyz[0]=lidar_memory.xyz[temp_id][0];
-          temp_xyz[1]=lidar_memory.xyz[temp_id][1];
-          temp_xyz[2]=lidar_memory.xyz[temp_id][2];
-
-          temp_R=sqrt((c_xyz[0]-temp_xyz[0])*(c_xyz[0]-temp_xyz[0])
-              +(c_xyz[1]-temp_xyz[1])*(c_xyz[1]-temp_xyz[1])
-              +(c_xyz[2]-temp_xyz[2])*(c_xyz[2]-temp_xyz[2]));
-          bool features_exist = lidar_memory.features.find(Ids_WM[i]) != lidar_memory.features.end();
-          if(temp_R<R_search && features_exist){
-            Ids_R.push_back(Ids_WM[i]);
+            temp_R=sqrt((c_xyz[0]-temp_xyz[0])*(c_xyz[0]-temp_xyz[0])
+                +(c_xyz[1]-temp_xyz[1])*(c_xyz[1]-temp_xyz[1])
+                +(c_xyz[2]-temp_xyz[2])*(c_xyz[2]-temp_xyz[2]));
+            bool features_exist = lidar_memory.features.find(Ids_WM[i]) != lidar_memory.features.end();
+            if(temp_R<R_search && features_exist){
+              Ids_R.push_back(Ids_WM[i]);
+            }
           }
         }
         ROS_DEBUG("Number of nodes within R (%.1lf m): %d",R_search,Ids_R.size());
@@ -748,11 +749,11 @@ int main(int argc, char** argv)
 
   //read STM size and RTAB-Maps mode
   while(true){
-    if(nh.hasParam("/rtabmap/Mem/STMSize") && srvClient.exists()){
+    if(nh.hasParam("/rtabmap/rtabmap/Mem/STMSize") && srvClient.exists()){
+
+      nh.getParam("/rtabmap/rtabmap/Mem/STMSize", STM_size);
       std::string temp;
-      nh.getParam("/rtabmap/Mem/STMSize", temp);
-      STM_size=std::stoi(temp);
-      nh.getParam("/rtabmap/Mem/IncrementalMemory", temp);
+      nh.getParam("/rtabmap/rtabmap/Mem/IncrementalMemory", temp);
       if (temp=="true"){MappingMode=true;}
       else{MappingMode=false;}
       break;

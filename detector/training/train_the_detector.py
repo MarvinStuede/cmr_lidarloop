@@ -1,19 +1,25 @@
-﻿#* @file   train_the_detector.py
-#* @author Tim-Lukas Habich
-#* @date   03/2020
-#*
-#* @brief  Standalone program to train the loop detector with
-#*         raw_training_data.csv (or similar .csv passed as argument when calling the program)
-#*         -> Detector according to the method of Granström - Learning to Close
-#*	   the Loop from 3D Point Clouds
+#!/usr/bin/env python
+"""
+﻿@file   train_the_detector.py
+@author Tim-Lukas Habich
+@date   03/2020
 
+@brief  Standalone program to train the loop detector with
+         raw_training_data.csv (or similar .csv passed as argument when calling the program)
+         -> Detector according to the method of Granström - Learning to Close
+	   the Loop from 3D Point Clouds
+"""
 from sklearn.ensemble import AdaBoostClassifier
 import numpy as np
 import pickle
-from time import clock
 import pdb
 import sys
-from functions_for_detector import *
+import functions_for_detector as fun
+if sys.version_info.major == 3:
+    assert sys.version_info.minor >= 3, "Must use at least Python 3.3"
+    from time import process_time as get_time
+else:
+    from time import clock as get_time
 
 ##### Inputs #####
 #Distance in m, for which the classifier should detect a loop closure
@@ -50,27 +56,27 @@ else:
 #If desired, execute repetitive k-fold cross validation also
 ROC={"n_max_points":n_max_points}
 for i_detector in np.arange(n_detectors):
-    raw_data, lengths, names = get_raw_data_from_csv(name_csv)
-    raw_data = delete_randomly_raw_data(raw_data,n_max_points)
-    data, indizes_his = split_raw_data(raw_data,lengths)
-    plot_x_y_map(data, "xy_map_"+str(np.size(data["xyz"],0))+"_nodes.pdf")
+    raw_data, lengths, names = fun.get_raw_data_from_csv(name_csv)
+    raw_data = fun.delete_randomly_raw_data(raw_data,n_max_points)
+    data, indizes_his = fun.split_raw_data(raw_data,lengths)
+    fun.plot_x_y_map(data, "xy_map_"+str(np.size(data["xyz"],0))+"_nodes.pdf")
 
     #Creation of training data: each node is compared with each other
-    train_data, loop_count, no_loop_count=compare_all_nodes(raw_data,data, indizes_his, loop_closure_distance, pos_neg_ratio)
+    train_data, loop_count, no_loop_count=fun.compare_all_nodes(raw_data,data, indizes_his, loop_closure_distance, pos_neg_ratio)
     print("\nTraining data consisting of "+str(np.size(train_data["y"]))+" pairs created.")
     print("Among them are "+str(loop_count)+" loop-pairs and "+str(no_loop_count)+" no-loop-pairs (user defined positive negative ratio: "+str(pos_neg_ratio)+").\nThe defined loop closure distance is "+str(loop_closure_distance)+"m.")
 
     #Create .csv with data for AdaBoost
     if create_AdaBoost_csv:
-        print_data_for_AdaBoost_in_csv(train_data,i_detector)
+        fun.print_data_for_AdaBoost_in_csv(train_data,i_detector)
 
     #Training of the classifier
-    classifier=train_AdaBoost(train_data["x"],train_data["y"][:,0])
+    classifier=fun.train_AdaBoost(train_data["x"],train_data["y"][:,0])
 
     #Prediction time
-    t1=clock()
+    t1=get_time()
     classifier.predict_proba(np.array(train_data["x"][0],ndmin=2))[0,1]
-    t2=clock()
+    t2=get_time()
     print("AdaBoost Classifier trained.")
     print("Time for Prediction: "+str(round((t2-t1)*10**3,1))+"ms.")
 
@@ -82,7 +88,7 @@ for i_detector in np.arange(n_detectors):
     else:
         with open('LiDAR_Loopdetector'+str(i_detector)+'.pickle', 'wb') as f:
             pickle.dump(classifier, f, pickle.HIGHEST_PROTOCOL)
-        print("LiDAR Loop Detector saved as LiDAR_Loopdetector"+str(i_detector)+".pickle.")
+        print("LiDAR Loop Detector saved as LiDAR_Loopdetector "+str(i_detector)+".pickle.")
 
     #k-fold cross validations
     if execute_cv:
@@ -96,7 +102,7 @@ for i_detector in np.arange(n_detectors):
                 #Print progress
                 sys.stdout.write("\rCross validation progress: "+str(i_cv+1)+"/"+str(n_cross_validations)+" started")
                 sys.stdout.flush()
-                temp_rates=do_k_fold_cv(train_data,n_folds,loop_probability_min)
+                temp_rates=fun.do_k_fold_cv(train_data,n_folds,loop_probability_min)
                 #Rates dictionary for i_detector
                 if i_cv==0:
                     #Initialization
@@ -126,7 +132,7 @@ for i_detector in np.arange(n_detectors):
                 ROC["FA_"+str(i_detector)]=np.hstack([ROC["FA_"+str(i_detector)],np.array(current_mean_fa)])
                 ROC["loop_prob_min_"+str(i_detector)]=np.hstack([ROC["loop_prob_min_"+str(i_detector)],np.array(loop_probability_min)])
             loop_probability_min+=loop_probability_inc
-        plot_ROC_curve(ROC,i_detector)
+        fun.plot_ROC_curve(ROC,i_detector)
         #Save mean and standard deviation at FA < 1%!!!
         if i_detector==0:
             #Initalization
@@ -142,5 +148,5 @@ for i_detector in np.arange(n_detectors):
             cv_results["std_fa"]=np.hstack([cv_results["std_fa"],np.array([current_std_fa])])
         #pdb.set_trace()
 if execute_cv:
-    plot_cv_results(cv_results)
+    fun.plot_cv_results(cv_results)
 print("\n")

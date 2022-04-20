@@ -47,6 +47,13 @@ void computeNormals(PointCloud<PointXYZI>::Ptr cloud,
   //norm_est.setRadiusSearch (radius);
   norm_est.setKSearch(k);
   norm_est.compute (*normals);
+  for (int i = 0; i < normals->size(); i++)
+  {
+    if (!pcl::isFinite<pcl::Normal>((*normals)[i]))
+    {
+      PCL_WARN("normals[%d] is not finite\n", i);
+    }
+  }
 }
 
 void computeKeypointsAndDescriptors(PointCloud<PointXYZI>::Ptr cloud,
@@ -58,31 +65,39 @@ void computeKeypointsAndDescriptors(PointCloud<PointXYZI>::Ptr cloud,
 {
   //Keypoint indices and features
   FPFHEstimation<PointXYZI, Normal, FPFHSignature33>::Ptr fpfh_est (new FPFHEstimation<PointXYZI, Normal, FPFHSignature33>);
-  fpfh_est->setSearchSurface (cloud);
-  fpfh_est->setInputCloud (cloud);
-  fpfh_est->setInputNormals (normals);
+  fpfh_est->setSearchSurface(cloud);
+  fpfh_est->setInputCloud(cloud);
+  fpfh_est->setInputNormals(normals);
   search::KdTree<PointXYZI>::Ptr tree (new search::KdTree<PointXYZI> ());
-  fpfh_est->setSearchMethod (tree);
+  fpfh_est->setSearchMethod(tree);
 
-  MultiscaleFeaturePersistence<PointXYZI, FPFHSignature33> fpfh_per;
-  fpfh_per.setScalesVector (scale_values);
-  fpfh_per.setAlpha (alpha);
-  fpfh_per.setFeatureEstimator (fpfh_est);
-  fpfh_per.setDistanceMetric (pcl::CS);
-  boost::shared_ptr<std::vector<int> > keypoint_indices (new std::vector<int> ());
-  fpfh_per.determinePersistentFeatures(*features, keypoint_indices);
+  fpfh_est->setKSearch(130);
+  fpfh_est->compute(*features);
+  *keypoints = *cloud;
+  return;
 
-  //Extract keypoints from cloud
-  ExtractIndices<PointXYZI> extract_indices_filter;
-  extract_indices_filter.setInputCloud (cloud);
-  extract_indices_filter.setIndices (keypoint_indices);
-  extract_indices_filter.filter (*keypoints);
+  // Multiscale commented due to seg fault bug in newer PCL versions
+  // Fix not yet available in official PCL debs as of 04/2022
+  // See: https://github.com/PointCloudLibrary/pcl/pull/5109
+  //  MultiscaleFeaturePersistence<PointXYZI, FPFHSignature33> fpfh_per;
+  //  fpfh_per.setScalesVector(scale_values);
+  //  fpfh_per.setAlpha(alpha);
+  //  fpfh_per.setFeatureEstimator(fpfh_est);
+  //  fpfh_per.setDistanceMetric(pcl::CS);
+  //  boost::shared_ptr<std::vector<int> > keypoint_indices(new std::vector<int> ());
+  //  fpfh_per.determinePersistentFeatures(*features, keypoint_indices);
+
+  //  //Extract keypoints from cloud
+  //  ExtractIndices<PointXYZI> extract_indices_filter;
+  //  extract_indices_filter.setInputCloud(cloud);
+  //  extract_indices_filter.setIndices(keypoint_indices);
+  //  extract_indices_filter.filter(*keypoints);
 }
 
 void normalsVis (
     PointCloud<PointXYZI>::Ptr cloud, PointCloud<Normal>::Ptr normals)
 {
-  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+  pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer ("3D Viewer"));
   viewer->setBackgroundColor (0, 0, 0);
   pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZI>
         color (cloud, 0, 0, 255);
@@ -236,6 +251,9 @@ void initial_alignment(PointCloud<PointXYZI>::Ptr input_cloud,
     //Input cloud: normals, keypoints & descriptors
     PointCloud<Normal>::Ptr input_cloud_normals (new PointCloud<Normal>);
     computeNormals(input_cloud,input_cloud_normals,k_normals);
+    if (visualize_normals){
+      normalsVis(input_cloud, input_cloud_normals);
+    }
     PointCloud<FPFHSignature33>::Ptr input_cloud_features (new PointCloud<FPFHSignature33>);
     PointCloud<PointXYZI>::Ptr input_cloud_keypoints (new PointCloud<PointXYZI>);
     computeKeypointsAndDescriptors(input_cloud,input_cloud_normals,input_cloud_features,
@@ -244,6 +262,10 @@ void initial_alignment(PointCloud<PointXYZI>::Ptr input_cloud,
     //Target cloud: normals, keypoints & descriptors
     PointCloud<Normal>::Ptr target_cloud_normals (new PointCloud<Normal>);
     computeNormals(target_cloud,target_cloud_normals,k_normals);
+    //Visualize normals for debugging
+    if (visualize_normals){
+      normalsVis(target_cloud, target_cloud_normals);
+    }
     PointCloud<FPFHSignature33>::Ptr target_cloud_features (new PointCloud<FPFHSignature33>);
     PointCloud<PointXYZI>::Ptr target_cloud_keypoints (new PointCloud<PointXYZI>);
     computeKeypointsAndDescriptors(target_cloud,target_cloud_normals,target_cloud_features,
@@ -252,11 +274,6 @@ void initial_alignment(PointCloud<PointXYZI>::Ptr input_cloud,
     double duration_descriptors = ((std::clock()-start_ia)/(double)CLOCKS_PER_SEC)*pow(10,3);
     //std::cout<<"Computation of normals, keypoints and descriptors took "<<duration_descriptors<<"ms."<<std::endl;
 
-    //Visualize normals for debugging
-    if (visualize_normals){
-      normalsVis(input_cloud, input_cloud_normals);
-      normalsVis(target_cloud, target_cloud_normals);
-    }
 
     //Compute correspondences
     CorrespondencesPtr correspondences (new Correspondences);

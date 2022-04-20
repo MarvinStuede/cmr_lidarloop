@@ -34,7 +34,7 @@
     </node> 
 
     <!-- Start registration server -->
-    <node name="lidar_registration_server" pkg="cmr_lidarloop" type="lidar_registration_server" output="screen" respawn="true">
+     <node name="lidar_registration_server" pkg="cmr_lidarloop" type="lidar_registration_server" output="screen" respawn="true">
      </node>
 
     <!-- Start loop detector server -->
